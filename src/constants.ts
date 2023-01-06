@@ -1,5 +1,5 @@
 export const BASE_URL = '/api/users';
-export const MAX_URL_LENGTH = BASE_URL.split('/').filter((x) => x !== '').length + 1;
+export const MAX_URL_LENGTH = BASE_URL.split('/').length;
 
 export enum Methods {
   GET = 'GET',

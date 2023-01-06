@@ -3,8 +3,11 @@ import { IUserReqData } from './types';
 import { validate as isUuidValid, version as uuidVersion } from 'uuid';
 
 export const urlValidator = (url: string, method: Methods): string => {
-  if (url.startsWith(BASE_URL)) {
-    const parsedUrl = url.split('/').filter((x) => x !== '');
+  if (
+    url.startsWith(BASE_URL) &&
+    (url.length === BASE_URL.length || url[BASE_URL.length] === '/')
+  ) {
+    const parsedUrl = url.split('/').slice(1);
 
     if (
       parsedUrl.length > MAX_URL_LENGTH ||
