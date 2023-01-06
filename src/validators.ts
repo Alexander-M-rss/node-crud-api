@@ -1,10 +1,10 @@
 import { BASE_URL, ErrMsg, MAX_URL_LENGTH, Methods } from './constants';
 import { IUserReqData } from './types';
+import { validate as isUuidValid, version as uuidVersion } from 'uuid';
 
 export const urlValidator = (url: string, method: Methods): string => {
   if (url.startsWith(BASE_URL)) {
     const parsedUrl = url.split('/').filter((x) => x !== '');
-    console.log(parsedUrl);
 
     if (
       parsedUrl.length > MAX_URL_LENGTH ||
@@ -49,4 +49,10 @@ export const reqDataValidator = (data: IUserReqData): void => {
   }
 
   throw new Error(ErrMsg.InvalidReqData);
+};
+
+export const uuidValidator = (id: string) => {
+  if (!isUuidValid(id) || uuidVersion(id) != 4) {
+    throw new Error(ErrMsg.InvalidUserId);
+  }
 };

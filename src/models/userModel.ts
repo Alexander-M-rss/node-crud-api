@@ -10,3 +10,11 @@ export const createUser = (user: IUserReqData) => {
 
   return newUser;
 };
+
+export const getAllUser = () => {
+  return db;
+};
+
+export const findUser = (id: string) => {
+  return db.find((user) => user.id === id);
+};

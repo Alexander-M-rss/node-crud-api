@@ -1,7 +1,7 @@
 import { createServer, IncomingMessage } from 'http';
 import { Methods, StatusCode, ErrMsg } from './constants';
-import { postUser } from './controllers/userController';
-import { Response } from './types';
+import { getUser, postUser } from './controllers/userController';
+import { IUserReqData, Response } from './types';
 import { urlValidator } from './validators';
 
 import { jsonValidator } from './validators';
@@ -44,11 +44,16 @@ export const runServer = (port: number) => {
 
       const userId = urlValidator(url, method);
 
-      const data = await getReqData(req);
+      let data: IUserReqData;
       let code: number;
 
       switch (method) {
+        case Methods.GET:
+          code = StatusCode.SUCCESS_200;
+          resp = getUser(userId);
+          break;
         case Methods.POST:
+          data = await getReqData(req);
           code = StatusCode.SUCCESS_201;
           resp = postUser(data);
           break;
