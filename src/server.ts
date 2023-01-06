@@ -1,6 +1,6 @@
 import { createServer, IncomingMessage } from 'http';
 import { Methods, StatusCode, ErrMsg } from './constants';
-import { getUser, postUser } from './controllers/userController';
+import { getUser, postUser, putUser } from './controllers/userController';
 import { IUserReqData, Response } from './types';
 import { urlValidator } from './validators';
 
@@ -56,6 +56,11 @@ export const runServer = (port: number) => {
           data = await getReqData(req);
           code = StatusCode.SUCCESS_201;
           resp = postUser(data);
+          break;
+        case Methods.PUT:
+          data = await getReqData(req);
+          code = StatusCode.SUCCESS_200;
+          resp = putUser(userId, data);
           break;
         default:
           code = StatusCode.NOT_FOUND;

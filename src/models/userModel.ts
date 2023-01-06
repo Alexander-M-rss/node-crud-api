@@ -18,3 +18,15 @@ export const getAllUser = () => {
 export const findUser = (id: string) => {
   return db.find((user) => user.id === id);
 };
+
+export const updateUser = (id: string, user: IUserReqData) => {
+  const idx = db.findIndex((user) => user.id === id);
+
+  if (idx < 0) {
+    return null;
+  }
+
+  const updatedUser = { id, ...user };
+  db[idx] = updatedUser;
+  return updatedUser;
+};
