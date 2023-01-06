@@ -1,6 +1,6 @@
 import { createServer, IncomingMessage } from 'http';
 import { Methods, StatusCode, ErrMsg } from './constants';
-import { getUser, postUser, putUser } from './controllers/userController';
+import { deleteUser, getUser, postUser, putUser } from './controllers/userController';
 import { IUserReqData, Response } from './types';
 import { urlValidator } from './validators';
 
@@ -34,7 +34,8 @@ export const getErrStatusCode = (err: ErrMsg) => {
 
 export const runServer = (port: number) => {
   const server = createServer(async (req, res) => {
-    let resp: Response = { code: StatusCode.SERVER_ERROR, msg: ErrMsg.InternalServerError };
+    let resp: Response = '';
+    let code = StatusCode.SUCCESS_200;
 
     res.setHeader('Content-Type', 'application/json');
 
@@ -45,11 +46,9 @@ export const runServer = (port: number) => {
       const userId = urlValidator(url, method);
 
       let data: IUserReqData;
-      let code: number;
 
       switch (method) {
         case Methods.GET:
-          code = StatusCode.SUCCESS_200;
           resp = getUser(userId);
           break;
         case Methods.POST:
@@ -59,14 +58,16 @@ export const runServer = (port: number) => {
           break;
         case Methods.PUT:
           data = await getReqData(req);
-          code = StatusCode.SUCCESS_200;
           resp = putUser(userId, data);
+          break;
+        case Methods.DELETE:
+          code = StatusCode.SUCCESS_204;
+          deleteUser(userId);
           break;
         default:
           code = StatusCode.NOT_FOUND;
           resp = { code, msg: ErrMsg.NonexistentEndpoint };
       }
-      res.writeHead(code);
     } catch (err) {
       const msg = <ErrMsg>(
         (err instanceof Error && Object.values<string>(ErrMsg).includes(err.message)
@@ -74,13 +75,16 @@ export const runServer = (port: number) => {
           : ErrMsg.InternalServerError)
       );
 
-      const code = getErrStatusCode(msg);
+      code = getErrStatusCode(msg);
 
       resp = { code, msg };
-
-      res.writeHead(code);
     } finally {
-      res.end(JSON.stringify(resp));
+      res.writeHead(code);
+      if (resp) {
+        res.end(JSON.stringify(resp));
+      } else {
+        res.end();
+      }
     }
   });
 

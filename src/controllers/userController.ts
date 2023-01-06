@@ -1,5 +1,5 @@
 import { IUser, IUserReqData } from '../types';
-import { createUser, findUser, getAllUser, updateUser } from '../models/userModel';
+import { createUser, findUser, getAllUser, removeUser, updateUser } from '../models/userModel';
 import { reqDataValidator, uuidValidator } from '../validators';
 import { ErrMsg } from '../constants';
 
@@ -36,4 +36,12 @@ export const putUser = (id: string, data: IUserReqData): IUser => {
   }
 
   return user;
+};
+
+export const deleteUser = (id: string) => {
+  uuidValidator(id);
+
+  if (!removeUser(id)) {
+    throw new Error(ErrMsg.NonexistentUserId);
+  }
 };

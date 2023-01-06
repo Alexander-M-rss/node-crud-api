@@ -14,4 +14,4 @@ export interface IError {
   msg: ErrMsg;
 }
 
-export type Response = IUser | IUser[] | IError;
+export type Response = IUser | IUser[] | IError | '';

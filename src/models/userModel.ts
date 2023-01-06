@@ -30,3 +30,14 @@ export const updateUser = (id: string, user: IUserReqData) => {
   db[idx] = updatedUser;
   return updatedUser;
 };
+
+export const removeUser = (id: string) => {
+  const idx = db.findIndex((user) => user.id === id);
+
+  if (idx < 0) {
+    return false;
+  }
+
+  db.splice(idx, 1);
+  return true;
+};
