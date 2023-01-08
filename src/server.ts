@@ -32,62 +32,62 @@ export const getErrStatusCode = (err: ErrMsg) => {
   }
 };
 
-export const runServer = (port: number) => {
-  const server = createServer(async (req, res) => {
-    let resp: Response = '';
-    let code = StatusCode.SUCCESS_200;
+export const server = createServer(async (req, res) => {
+  let resp: Response = '';
+  let code = StatusCode.SUCCESS_200;
 
-    res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Type', 'application/json');
 
-    try {
-      const method = <Methods>req.method;
-      const url = req.url || '';
+  try {
+    const method = <Methods>req.method;
+    const url = req.url || '';
 
-      const userId = urlValidator(url, method);
+    const userId = urlValidator(url, method);
 
-      let data: IUserReqData;
+    let data: IUserReqData;
 
-      switch (method) {
-        case Methods.GET:
-          resp = getUser(userId);
-          break;
-        case Methods.POST:
-          data = await getReqData(req);
-          code = StatusCode.SUCCESS_201;
-          resp = postUser(data);
-          break;
-        case Methods.PUT:
-          data = await getReqData(req);
-          resp = putUser(userId, data);
-          break;
-        case Methods.DELETE:
-          code = StatusCode.SUCCESS_204;
-          deleteUser(userId);
-          break;
-        default:
-          code = StatusCode.NOT_FOUND;
-          resp = { code, msg: ErrMsg.NonexistentEndpoint };
-      }
-    } catch (err) {
-      const msg = <ErrMsg>(
-        (err instanceof Error && Object.values<string>(ErrMsg).includes(err.message)
-          ? err.message
-          : ErrMsg.InternalServerError)
-      );
-
-      code = getErrStatusCode(msg);
-
-      resp = { code, msg };
-    } finally {
-      res.writeHead(code);
-      if (resp) {
-        res.end(JSON.stringify(resp));
-      } else {
-        res.end();
-      }
+    switch (method) {
+      case Methods.GET:
+        resp = getUser(userId);
+        break;
+      case Methods.POST:
+        data = await getReqData(req);
+        code = StatusCode.SUCCESS_201;
+        resp = postUser(data);
+        break;
+      case Methods.PUT:
+        data = await getReqData(req);
+        resp = putUser(userId, data);
+        break;
+      case Methods.DELETE:
+        code = StatusCode.SUCCESS_204;
+        deleteUser(userId);
+        break;
+      default:
+        code = StatusCode.NOT_FOUND;
+        resp = { code, msg: ErrMsg.NonexistentEndpoint };
     }
-  });
+  } catch (err) {
+    const msg = <ErrMsg>(
+      (err instanceof Error && Object.values<string>(ErrMsg).includes(err.message)
+        ? err.message
+        : ErrMsg.InternalServerError)
+    );
 
+    code = getErrStatusCode(msg);
+
+    resp = { code, msg };
+  } finally {
+    res.writeHead(code);
+    if (resp) {
+      res.end(JSON.stringify(resp));
+    } else {
+      res.end();
+    }
+  }
+});
+
+export const runServer = (port: number) => {
   server.listen(port, () => {
     console.log(`Server started on ${port} port`);
   });
