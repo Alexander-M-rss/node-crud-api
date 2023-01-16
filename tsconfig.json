@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "allowUnreachableCode": false,
+    "alwaysStrict": true,
+    "strict": true,
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "./dist"],
+  "ts-node": {
+    "esm": true,
+    "files": true,
+  },
+}
